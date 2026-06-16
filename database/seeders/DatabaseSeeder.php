@@ -2,12 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\CommunityAccountRequest;
+use App\Models\CommunityStory;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,163 +25,86 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
 
-        $categories = collect([
-            ['name' => 'Taman Bacaan', 'color' => '#00236f'],
-            ['name' => 'Forum Literasi', 'color' => '#006591'],
-            ['name' => 'Perpustakaan Komunitas', 'color' => '#735c00'],
-            ['name' => 'Workshop', 'color' => '#39b8fd'],
-        ])->mapWithKeys(function (array $category) {
-            $id = DB::table('literacy_categories')->updateOrInsert([
-                'slug' => Str::slug($category['name']),
-            ], [
-                'name' => $category['name'],
-                'color' => $category['color'],
-                'description' => 'Kategori '.$category['name'].' dalam ekosistem literasi Riau.',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-            return [$category['name'] => DB::table('literacy_categories')->where('slug', Str::slug($category['name']))->value('id')];
-        });
-
         $communities = collect([
             [
-                'name' => 'TBM Hamfara',
-                'type' => 'Taman Bacaan',
-                'city' => 'Pekanbaru',
-                'district' => 'Tampan',
-                'category' => 'Taman Bacaan',
+                'name' => 'Koordinator TBM Hamfara',
+                'community_name' => 'TBM Hamfara',
+                'email' => 'tbmhamfara@silera.test',
+                'position' => 'Koordinator',
             ],
             [
-                'name' => 'Rumpus Bintang',
-                'type' => 'Komunitas',
-                'city' => 'Dumai',
-                'district' => 'Dumai Timur',
-                'category' => 'Forum Literasi',
+                'name' => 'Koordinator Rumpus Bintang',
+                'community_name' => 'Rumpus Bintang',
+                'email' => 'rumpusbintang@silera.test',
+                'position' => 'Ketua',
             ],
             [
-                'name' => 'Forum Lingkar Pena Riau',
-                'type' => 'Forum',
-                'city' => 'Kampar',
-                'district' => 'Bangkinang',
-                'category' => 'Forum Literasi',
+                'name' => 'Koordinator Forum Lingkar Pena Riau',
+                'community_name' => 'Forum Lingkar Pena Riau',
+                'email' => 'forumlingkarpenariau@silera.test',
+                'position' => 'Koordinator',
             ],
             [
-                'name' => 'TBM Kandas Library',
-                'type' => 'Perpustakaan',
-                'city' => 'Siak',
-                'district' => 'Mempura',
-                'category' => 'Perpustakaan Komunitas',
+                'name' => 'Koordinator TBM Kandas Library',
+                'community_name' => 'TBM Kandas Library',
+                'email' => 'tbmkandaslibrary@silera.test',
+                'position' => 'Ketua',
             ],
-        ])->map(function (array $community) use ($admin, $categories) {
-            DB::table('literacy_communities')->updateOrInsert([
-                'slug' => Str::slug($community['name']),
+        ])->mapWithKeys(function (array $community) {
+            $account = CommunityAccountRequest::query()->updateOrCreate([
+                'email' => $community['email'],
             ], [
-                'user_id' => $admin->id,
                 'name' => $community['name'],
-                'type' => $community['type'],
-                'description' => 'Komunitas literasi aktif yang mendukung pendataan dan kolaborasi literasi di wilayah '.$community['city'].'.',
-                'address' => 'Jalan Literasi No. 1',
-                'district' => $community['district'],
-                'city' => $community['city'],
-                'province' => 'Riau',
-                'contact_person' => 'Koordinator '.$community['name'],
+                'community_name' => $community['community_name'],
+                'logo_path' => null,
+                'position' => $community['position'],
+                'vision' => 'Menjadi komunitas literasi yang aktif, terbuka, dan berdampak bagi masyarakat Riau.',
+                'mission' => 'Mengadakan kegiatan membaca, memperluas akses bahan bacaan, dan membangun kolaborasi literasi.',
+                'vision_mission' => 'Menjadi komunitas literasi yang aktif, terbuka, dan berdampak bagi masyarakat Riau.',
+                'background' => 'Komunitas ini hadir untuk menguatkan budaya baca dan ruang belajar masyarakat.',
                 'phone' => '081234567890',
-                'email' => Str::slug($community['name'], '').'@silera.test',
-                'status' => 'verified',
-                'verified_at' => now(),
-                'created_at' => now(),
-                'updated_at' => now(),
+                'password' => Hash::make('password'),
+                'status' => 'approved',
+                'terms_accepted_at' => now(),
             ]);
 
-            $communityId = DB::table('literacy_communities')->where('slug', Str::slug($community['name']))->value('id');
-
-            DB::table('community_category')->updateOrInsert([
-                'literacy_community_id' => $communityId,
-                'literacy_category_id' => $categories[$community['category']],
-            ], [
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-            DB::table('community_members')->updateOrInsert([
-                'literacy_community_id' => $communityId,
-                'email' => 'koordinator+'.Str::slug($community['name'], '').'@silera.test',
-            ], [
-                'name' => 'Koordinator '.$community['name'],
-                'phone' => '081234567890',
-                'role' => 'coordinator',
-                'status' => 'active',
-                'joined_at' => now()->subMonths(6)->toDateString(),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-            return $communityId;
+            return [$community['community_name'] => $account];
         });
 
-        $posts = [
-            'Lapak Baca Pinggir Sungai Siak: Menghidupkan Budaya Baca',
-            'Gerakan Satu Dusun Satu Pojok Baca Capai Target',
-            'Menyongsong Festival Literasi Riau 2024',
+        $stories = [
+            [
+                'community' => 'TBM Hamfara',
+                'title' => 'Lapak Baca Pinggir Sungai Siak: Menghidupkan Budaya Baca',
+                'story' => 'Gerakan literasi masyarakat di tepian Sungai Siak semakin bergairah dengan hadirnya lapak baca komunitas. Anak-anak dan remaja berkumpul untuk membaca, berdiskusi, dan mengenal cerita lokal Riau.',
+            ],
+            [
+                'community' => 'Rumpus Bintang',
+                'title' => 'Gerakan Satu Dusun Satu Pojok Baca Capai Target',
+                'story' => 'Upaya pemerataan akses bacaan terus dilakukan melalui pojok baca di tingkat dusun. Kegiatan ini mempertemukan relawan, warga, dan pelajar dalam ruang belajar yang sederhana namun hidup.',
+            ],
+            [
+                'community' => 'Forum Lingkar Pena Riau',
+                'title' => 'Menyongsong Festival Literasi Riau 2024',
+                'story' => 'Persiapan festival literasi dilakukan melalui kurasi kegiatan, pelibatan komunitas, dan penyusunan agenda yang mendorong kreativitas membaca serta menulis.',
+            ],
         ];
 
-        foreach ($posts as $index => $title) {
-            DB::table('literacy_posts')->updateOrInsert([
-                'slug' => Str::slug($title),
+        foreach ($stories as $story) {
+            $account = $communities[$story['community']];
+
+            CommunityStory::query()->updateOrCreate([
+                'title' => $story['title'],
+                'author_email' => $account->email,
             ], [
-                'user_id' => $admin->id,
-                'literacy_community_id' => $communities[$index] ?? $communities->first(),
-                'title' => $title,
-                'type' => 'news',
-                'excerpt' => 'Info terkini gerakan literasi Riau dari komunitas dan jejaring Balai Bahasa.',
-                'content' => 'Konten berita '.$title.' disiapkan sebagai data awal untuk sistem SILERA.',
+                'community_account_request_id' => $account->id,
+                'author_name' => $account->name,
+                'story' => $story['story'],
+                'photo_path' => null,
                 'status' => 'published',
-                'published_at' => now()->subDays(7 - $index),
-                'created_at' => now(),
-                'updated_at' => now(),
+                'reviewed_by' => $admin->id,
+                'reviewed_at' => now(),
+                'review_comment' => null,
             ]);
         }
-
-        DB::table('literacy_programs')->updateOrInsert([
-            'title' => 'Festival Literasi Riau',
-        ], [
-            'literacy_community_id' => $communities->first(),
-            'description' => 'Program kolaborasi tahunan bagi komunitas literasi Riau.',
-            'location' => 'Pekanbaru',
-            'start_date' => now()->addMonth()->toDateString(),
-            'end_date' => now()->addMonth()->addDays(2)->toDateString(),
-            'target_participants' => 250,
-            'actual_participants' => 0,
-            'status' => 'planned',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        DB::table('activity_reports')->updateOrInsert([
-            'literacy_community_id' => $communities->first(),
-            'title' => 'Kelas Baca Akhir Pekan',
-        ], [
-            'user_id' => $admin->id,
-            'activity_date' => now()->subWeek()->toDateString(),
-            'participants_count' => 42,
-            'summary' => 'Kegiatan baca bersama untuk anak dan remaja.',
-            'outcome' => 'Peserta menyelesaikan sesi membaca terpandu dan diskusi singkat.',
-            'status' => 'approved',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        DB::table('collaboration_requests')->updateOrInsert([
-            'requester_community_id' => $communities->first(),
-            'title' => 'Pertukaran Relawan Literasi',
-        ], [
-            'partner_community_id' => $communities->last(),
-            'description' => 'Kolaborasi relawan untuk memperluas layanan baca komunitas.',
-            'proposed_date' => now()->addWeeks(3)->toDateString(),
-            'status' => 'open',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
     }
 }

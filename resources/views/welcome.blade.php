@@ -59,8 +59,8 @@
                     <h1>SILERA: Sistem Informasi Komunitas Literasi Riau</h1>
                     <p>Membangun ekosistem literasi yang terintegrasi di Bumi Lancang Kuning melalui pendataan, kolaborasi, dan pemberdayaan komunitas literasi di seluruh pelosok Riau.</p>
                     <div class="hero-actions">
-                        <a class="btn btn-primary btn-lg" href="{{ route('community-account.create') }}">Buat Akun <span aria-hidden="true">↗</span></a>
-                        <a class="btn btn-secondary btn-lg" href="{{ route('community-stories.create') }}">Tambahkan Cerita <span aria-hidden="true">✎</span></a>
+                        <a class="btn btn-primary btn-lg" href="{{ route('community-account.create') }}">Buat Akun <span aria-hidden="true">Ã¢â€ â€”</span></a>
+                        <a class="btn btn-secondary btn-lg" href="{{ route('community-stories.create') }}">Tambahkan Cerita <span aria-hidden="true">Ã¢Å“Å½</span></a>
                     </div>
                 </div>
 
@@ -87,7 +87,7 @@
                         <p>Temukan komunitas literasi yang sudah membuat akun dan terdaftar di SILERA.</p>
                     </div>
                     <form class="search-field" action="{{ route('communities.index') }}" method="GET">
-                        <span aria-hidden="true">⌕</span>
+                        <span aria-hidden="true">Ã¢Å’â€¢</span>
                         <input type="search" name="q" placeholder="Cari nama komunitas...">
                     </form>
                 </div>
@@ -134,12 +134,12 @@
                     <p>SILERA (Sistem Informasi Komunitas Literasi Riau) merupakan platform digital yang diinisiasi oleh Balai Bahasa Provinsi Riau untuk menjadi pusat data dan kolaborasi bagi para pegiat literasi di wilayah Riau.</p>
                     <div class="feature-list">
                         <div>
-                            <span class="feature-icon">▣</span>
+                            <span class="feature-icon">Ã¢â€“Â£</span>
                             <strong>Pusat Data</strong>
                             <p>Basis data terpadu komunitas literasi se-Provinsi Riau.</p>
                         </div>
                         <div>
-                            <span class="feature-icon">⌘</span>
+                            <span class="feature-icon">Ã¢Å’Ëœ</span>
                             <strong>Kolaborasi</strong>
                             <p>Memfasilitasi jejaring antar pegiat literasi daerah.</p>
                         </div>
@@ -183,7 +183,7 @@
                                     <span></span>
                                 </div>
                             @endif
-                            <div class="news-meta">{{ \Illuminate\Support\Carbon::parse($item->created_at)->translatedFormat('d M Y') }} <span>•</span> 5 min baca</div>
+                            <div class="news-meta">{{ \Illuminate\Support\Carbon::parse($item->created_at)->translatedFormat('d M Y') }} <span>Ã¢â‚¬Â¢</span> 5 min baca</div>
                             <h3>{{ $item->title }}</h3>
                             <p>{{ \Illuminate\Support\Str::limit($item->story, 130) }}</p>
                             @if ($isPublishedStory)
@@ -205,15 +205,19 @@
                 </div>
                 <p>SILERA adalah sistem informasi digital yang dikelola oleh Balai Bahasa Provinsi Riau untuk mendukung kemajuan literasi di Provinsi Riau.</p>
                 <div class="social-links" aria-label="Media sosial">
-                    <a href="#" aria-label="Instagram">◌</a>
-                    <a href="#" aria-label="Bagikan">↗</a>
-                    <a href="#" aria-label="Email">✉</a>
+                    <a href="#" aria-label="Facebook" title="Facebook">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.2 8.2V6.9c0-.6.4-.9 1-.9h1.6V3.2c-.8-.1-1.7-.2-2.5-.2-2.6 0-4.4 1.6-4.4 4.5v.7H7.2v3.1h2.7V21h3.4v-9.7h2.7l.4-3.1h-3.1Z"/></svg>
+                    </a>
+                    <a href="#" aria-label="TikTok" title="TikTok">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.8 3h3.1c.2 1.4 1 2.7 2.1 3.5.7.5 1.4.8 2.2.9v3.2c-1.5-.1-2.9-.6-4.1-1.4v5.9c0 3.4-2.7 5.9-6.1 5.9-3.1 0-5.6-2.2-5.9-5.1-.3-3.5 2.4-6.4 5.9-6.4.4 0 .8 0 1.1.1v3.4c-.4-.1-.8-.2-1.2-.2-1.6 0-2.8 1.3-2.6 2.9.1 1.2 1.1 2.1 2.3 2.2 1.5.1 2.8-1.1 2.8-2.6V3Z"/></svg>
+                    </a>
+                    <a href="#" aria-label="Instagram" title="Instagram">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.8 3h8.4C18.8 3 21 5.2 21 7.8v8.4c0 2.6-2.2 4.8-4.8 4.8H7.8C5.2 21 3 18.8 3 16.2V7.8C3 5.2 5.2 3 7.8 3Zm0 3C6.8 6 6 6.8 6 7.8v8.4c0 1 .8 1.8 1.8 1.8h8.4c1 0 1.8-.8 1.8-1.8V7.8c0-1-.8-1.8-1.8-1.8H7.8Zm8.9.8a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2ZM12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8Zm0 2.7a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6Z"/></svg>
+                    </a>
+                    <a href="#" aria-label="YouTube" title="YouTube">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 7.2c-.2-1-1-1.8-2-2C17.8 4.8 12 4.8 12 4.8s-5.8 0-7.6.4c-1 .2-1.8 1-2 2C2 9 2 12 2 12s0 3 .4 4.8c.2 1 1 1.8 2 2 1.8.4 7.6.4 7.6.4s5.8 0 7.6-.4c1-.2 1.8-1 2-2C22 15 22 12 22 12s0-3-.4-4.8ZM10 14.8V9.2l5.2 2.8L10 14.8Z"/></svg>
+                    </a>
                 </div>
-            </div>
-            <div>
-                <h2>Tautan Cepat</h2>
-                <a href="#">Beranda</a>
-                <a href="#komunitas">Komunitas</a>
                 <a href="#informasi">Informasi</a>
                 <a href="#tentang">Tentang Kami</a>
             </div>
@@ -226,7 +230,7 @@
             </div>
         </div>
         <div class="container footer-bottom">
-            <p>© 2024 SILERA - Sistem Informasi Komunitas Literasi Riau, Balai Bahasa Provinsi Riau.</p>
+            <p>Ã‚Â© 2024 SILERA - Sistem Informasi Komunitas Literasi Riau, Balai Bahasa Provinsi Riau.</p>
         </div>
     </footer>
 </body>

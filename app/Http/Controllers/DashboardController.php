@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\DB;
+use App\Models\CommunityAccountRequest;
+use App\Models\CommunityStory;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -10,16 +11,15 @@ class DashboardController extends Controller
     public function index(): View
     {
         $stats = [
-            'communities' => DB::table('literacy_communities')->count(),
-            'posts' => DB::table('literacy_posts')->count(),
-            'active_programs' => DB::table('literacy_programs')->whereIn('status', ['planned', 'active'])->count(),
-            'members' => DB::table('community_members')->count(),
+            'communities' => CommunityAccountRequest::query()->count(),
+            'pending_communities' => CommunityAccountRequest::query()->where('status', 'pending')->count(),
+            'published_stories' => CommunityStory::query()->where('status', 'published')->count(),
+            'submitted_stories' => CommunityStory::query()->where('status', 'submitted')->count(),
         ];
 
-        $activities = DB::table('activity_reports')
-            ->join('literacy_communities', 'activity_reports.literacy_community_id', '=', 'literacy_communities.id')
-            ->select('activity_reports.title', 'activity_reports.activity_date', 'activity_reports.status', 'literacy_communities.name as community_name')
-            ->latest('activity_reports.created_at')
+        $activities = CommunityStory::query()
+            ->with('account')
+            ->latest()
             ->limit(3)
             ->get();
 

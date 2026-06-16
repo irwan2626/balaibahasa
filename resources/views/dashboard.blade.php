@@ -44,9 +44,9 @@
             <main class="dashboard-content">
                 <section class="welcome-panel">
                     <div>
-                        <span class="eyebrow">Laravel Dashboard</span>
-                        <h2>You're logged in!</h2>
-                        <p>Ini adalah halaman dashboard bawaan bergaya Laravel yang sudah disesuaikan untuk kebutuhan awal sistem SILERA.</p>
+                        <span class="eyebrow">Dashboard SILERA</span>
+                        <h2>Ringkasan data terbaru</h2>
+                        <p>Dashboard ini membaca data akun komunitas dan cerita yang masuk melalui sistem SILERA.</p>
                     </div>
                     <a class="btn btn-primary" href="{{ url('/') }}">Lihat Website</a>
                 </section>
@@ -60,21 +60,21 @@
                     </article>
                     <article class="stat-card">
                         <span class="stat-icon sky">B</span>
-                        <p>Berita Terbit</p>
-                        <strong>{{ $stats['posts'] }}</strong>
-                        <small>Informasi literasi</small>
+                        <p>Cerita Tayang</p>
+                        <strong>{{ $stats['published_stories'] }}</strong>
+                        <small>Articles yang disetujui</small>
                     </article>
                     <article class="stat-card">
                         <span class="stat-icon gold">P</span>
-                        <p>Program Aktif</p>
-                        <strong>{{ $stats['active_programs'] }}</strong>
-                        <small>Direncanakan atau berjalan</small>
+                        <p>Akun Pending</p>
+                        <strong>{{ $stats['pending_communities'] }}</strong>
+                        <small>Menunggu verifikasi admin</small>
                     </article>
                     <article class="stat-card">
                         <span class="stat-icon teal">A</span>
-                        <p>Kolaborator</p>
-                        <strong>{{ $stats['members'] }}</strong>
-                        <small>Anggota komunitas</small>
+                        <p>Cerita Review</p>
+                        <strong>{{ $stats['submitted_stories'] }}</strong>
+                        <small>Menunggu persetujuan</small>
                     </article>
                 </section>
 
@@ -82,22 +82,22 @@
                     <article class="dashboard-card">
                         <div class="card-heading">
                             <div>
-                                <h2>Aktivitas Terbaru</h2>
-                                <p>Pembaruan terakhir pada data komunitas literasi.</p>
+                                <h2>Cerita Terbaru</h2>
+                                <p>Pembaruan terakhir dari cerita komunitas yang masuk.</p>
                             </div>
-                            <a href="#">Lihat semua</a>
+                            <a href="{{ route('admin.stories.index') }}">Lihat semua</a>
                         </div>
                         <div class="activity-list">
                             @forelse ($activities as $activity)
                                 <div>
                                     <span></span>
-                                    <p><strong>{{ $activity->community_name }}</strong> mengirim laporan {{ $activity->title }}.</p>
-                                    <small>{{ \Illuminate\Support\Carbon::parse($activity->activity_date)->translatedFormat('d M Y') }} - {{ $activity->status }}</small>
+                                    <p><strong>{{ $activity->account?->community_name ?? 'Komunitas Literasi' }}</strong> mengirim cerita {{ $activity->title }}.</p>
+                                    <small>{{ $activity->created_at->translatedFormat('d M Y') }} - {{ $activity->status }}</small>
                                 </div>
                             @empty
                                 <div>
                                     <span></span>
-                                    <p><strong>Belum ada aktivitas.</strong> Laporan komunitas akan tampil di sini.</p>
+                                    <p><strong>Belum ada cerita.</strong> Cerita komunitas akan tampil di sini.</p>
                                     <small>Menunggu data</small>
                                 </div>
                             @endforelse
@@ -107,25 +107,25 @@
                     <article class="dashboard-card">
                         <div class="card-heading">
                             <div>
-                                <h2>Progres Verifikasi</h2>
-                                <p>Status kelengkapan data komunitas.</p>
+                                <h2>Status Sistem</h2>
+                                <p>Perbandingan data komunitas dan cerita terbaru.</p>
                             </div>
                         </div>
                         <div class="progress-list">
                             <div>
-                                <span>Profil Komunitas</span>
-                                <strong>82%</strong>
-                                <div><i style="width: 82%"></i></div>
+                                <span>Komunitas Terdaftar</span>
+                                <strong>{{ $stats['communities'] }}</strong>
+                                <div><i style="width: {{ min($stats['communities'] * 10, 100) }}%"></i></div>
                             </div>
                             <div>
-                                <span>Dokumen Pendukung</span>
-                                <strong>64%</strong>
-                                <div><i style="width: 64%"></i></div>
+                                <span>Cerita Tayang</span>
+                                <strong>{{ $stats['published_stories'] }}</strong>
+                                <div><i style="width: {{ min($stats['published_stories'] * 10, 100) }}%"></i></div>
                             </div>
                             <div>
-                                <span>Publikasi Berita</span>
-                                <strong>48%</strong>
-                                <div><i style="width: 48%"></i></div>
+                                <span>Menunggu Review</span>
+                                <strong>{{ $stats['submitted_stories'] }}</strong>
+                                <div><i style="width: {{ min($stats['submitted_stories'] * 10, 100) }}%"></i></div>
                             </div>
                         </div>
                     </article>
