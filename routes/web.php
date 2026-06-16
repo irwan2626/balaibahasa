@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/komunitas', [HomeController::class, 'communities'])->name('communities.index');
+Route::get('/komunitas/{community}', [HomeController::class, 'showCommunity'])->name('communities.show');
 Route::get('/articles', [HomeController::class, 'articles'])->name('articles.index');
 Route::get('/cerita/{story}', [HomeController::class, 'showStory'])->name('stories.show');
 
@@ -40,6 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/komunitas', [AdminCommunityAccountController::class, 'index'])->name('admin.communities.index');
     Route::patch('/dashboard/komunitas/{community}/approve', [AdminCommunityAccountController::class, 'approve'])->name('admin.communities.approve');
     Route::patch('/dashboard/komunitas/{community}/reject', [AdminCommunityAccountController::class, 'reject'])->name('admin.communities.reject');
+    Route::delete('/dashboard/komunitas/{community}', [AdminCommunityAccountController::class, 'destroy'])->name('admin.communities.destroy');
     Route::get('/dashboard/cerita', [AdminCommunityStoryController::class, 'index'])->name('admin.stories.index');
     Route::get('/dashboard/cerita/{story}', [AdminCommunityStoryController::class, 'show'])->name('admin.stories.show');
     Route::patch('/dashboard/cerita/{story}/comment', [AdminCommunityStoryController::class, 'comment'])->name('admin.stories.comment');

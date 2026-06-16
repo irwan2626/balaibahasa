@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\CommunityAccountRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class AdminCommunityAccountController extends Controller
@@ -39,5 +41,28 @@ class AdminCommunityAccountController extends Controller
         ]);
 
         return back()->with('status', 'Akun komunitas berhasil ditolak.');
+    }
+
+    public function destroy(CommunityAccountRequest $community): RedirectResponse
+    {
+        $community->load('stories');
+
+        $storyPhotos = $community->stories
+            ->pluck('photo_path')
+            ->filter()
+            ->all();
+
+        DB::transaction(function () use ($community) {
+            $community->stories()->delete();
+            $community->delete();
+        });
+
+        Storage::disk('public')->delete($storyPhotos);
+
+        if ($community->logo_path) {
+            Storage::disk('public')->delete($community->logo_path);
+        }
+
+        return back()->with('status', 'Akun komunitas dan seluruh artikelnya berhasil dihapus.');
     }
 }

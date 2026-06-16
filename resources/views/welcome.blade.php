@@ -59,8 +59,8 @@
                     <h1>SILERA: Sistem Informasi Komunitas Literasi Riau</h1>
                     <p>Membangun ekosistem literasi yang terintegrasi di Bumi Lancang Kuning melalui pendataan, kolaborasi, dan pemberdayaan komunitas literasi di seluruh pelosok Riau.</p>
                     <div class="hero-actions">
-                        <a class="btn btn-primary btn-lg" href="{{ route('community-account.create') }}">Buat Akun <span aria-hidden="true">Ã¢â€ â€”</span></a>
-                        <a class="btn btn-secondary btn-lg" href="{{ route('community-stories.create') }}">Tambahkan Cerita <span aria-hidden="true">Ã¢Å“Å½</span></a>
+                        <a class="btn btn-primary btn-lg" href="{{ route('community-account.create') }}">Buat Akun <span aria-hidden="true">&mdash;</span></a>
+                        <a class="btn btn-secondary btn-lg" href="{{ route('community-stories.create') }}">Tambahkan Cerita <span aria-hidden="true">➕</span></a>
                     </div>
                 </div>
 
@@ -87,7 +87,7 @@
                         <p>Temukan komunitas literasi yang sudah membuat akun dan terdaftar di SILERA.</p>
                     </div>
                     <form class="search-field" action="{{ route('communities.index') }}" method="GET">
-                        <span aria-hidden="true">Ã¢Å’â€¢</span>
+                        <span aria-hidden="true">⌕</span>
                         <input type="search" name="q" placeholder="Cari nama komunitas...">
                     </form>
                 </div>
@@ -95,16 +95,18 @@
                 <div class="community-grid">
                     @forelse ($registeredCommunities as $community)
                         <article class="community-card community-profile-card">
-                            <div class="community-logo-preview">
-                                @if ($community->logo_path)
-                                    <img src="{{ asset('storage/'.$community->logo_path) }}" alt="Logo {{ $community->community_name }}">
-                                @else
-                                    <span>{{ strtoupper(substr($community->community_name, 0, 1)) }}</span>
-                                @endif
-                            </div>
-                            <div class="card-body">
-                                <h3>{{ $community->community_name }}</h3>
-                            </div>
+                            <a href="{{ route('communities.show', $community) }}" class="community-link" aria-label="Profil {{ $community->community_name }}">
+                                <div class="community-logo-preview">
+                                    @if ($community->logo_path)
+                                        <img src="{{ asset('storage/'.$community->logo_path) }}" alt="Logo {{ $community->community_name }}">
+                                    @else
+                                        <span>{{ strtoupper(substr($community->community_name, 0, 1)) }}</span>
+                                    @endif
+                                </div>
+                                <div class="card-body">
+                                    <h3>{{ $community->community_name }}</h3>
+                                </div>
+                            </a>
                         </article>
                     @empty
                         <article class="community-empty-state">
@@ -134,12 +136,12 @@
                     <p>SILERA (Sistem Informasi Komunitas Literasi Riau) merupakan platform digital yang diinisiasi oleh Balai Bahasa Provinsi Riau untuk menjadi pusat data dan kolaborasi bagi para pegiat literasi di wilayah Riau.</p>
                     <div class="feature-list">
                         <div>
-                            <span class="feature-icon">Ã¢â€“Â£</span>
+                            <span class="feature-icon">📚</span>
                             <strong>Pusat Data</strong>
                             <p>Basis data terpadu komunitas literasi se-Provinsi Riau.</p>
                         </div>
                         <div>
-                            <span class="feature-icon">Ã¢Å’Ëœ</span>
+                            <span class="feature-icon">🤝</span>
                             <strong>Kolaborasi</strong>
                             <p>Memfasilitasi jejaring antar pegiat literasi daerah.</p>
                         </div>
@@ -183,7 +185,7 @@
                                     <span></span>
                                 </div>
                             @endif
-                            <div class="news-meta">{{ \Illuminate\Support\Carbon::parse($item->created_at)->translatedFormat('d M Y') }} <span>Ã¢â‚¬Â¢</span> 5 min baca</div>
+                            <div class="news-meta">{{ \Illuminate\Support\Carbon::parse($item->created_at)->translatedFormat('d M Y') }} <span>&bull;</span> 5 min baca</div>
                             <h3>{{ $item->title }}</h3>
                             <p>{{ \Illuminate\Support\Str::limit($item->story, 130) }}</p>
                             @if ($isPublishedStory)
@@ -230,7 +232,7 @@
             </div>
         </div>
         <div class="container footer-bottom">
-            <p>Ã‚Â© 2024 SILERA - Sistem Informasi Komunitas Literasi Riau, Balai Bahasa Provinsi Riau.</p>
+            <p>&copy; 2024 SILERA - Sistem Informasi Komunitas Literasi Riau, Balai Bahasa Provinsi Riau.</p>
         </div>
     </footer>
 </body>

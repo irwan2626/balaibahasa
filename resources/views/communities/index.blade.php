@@ -71,16 +71,18 @@
                 <div class="community-grid">
                     @forelse ($communities as $community)
                         <article class="community-card community-profile-card">
-                            <div class="community-logo-preview">
-                                @if ($community->logo_path)
-                                    <img src="{{ asset('storage/'.$community->logo_path) }}" alt="Logo {{ $community->community_name }}">
-                                @else
-                                    <span>{{ strtoupper(substr($community->community_name, 0, 1)) }}</span>
-                                @endif
-                            </div>
-                            <div class="card-body">
-                                <h3>{{ $community->community_name }}</h3>
-                            </div>
+                            <a href="{{ route('communities.show', $community) }}" class="community-link" aria-label="Profil {{ $community->community_name }}">
+                                <div class="community-logo-preview">
+                                    @if ($community->logo_path)
+                                        <img src="{{ asset('storage/'.$community->logo_path) }}" alt="Logo {{ $community->community_name }}">
+                                    @else
+                                        <span>{{ strtoupper(substr($community->community_name, 0, 1)) }}</span>
+                                    @endif
+                                </div>
+                                <div class="card-body">
+                                    <h3>{{ $community->community_name }}</h3>
+                                </div>
+                            </a>
                         </article>
                     @empty
                         <article class="community-empty-state">

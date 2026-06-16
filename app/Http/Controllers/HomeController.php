@@ -63,6 +63,14 @@ class HomeController extends Controller
         return view('communities.index', compact('communities', 'search'));
     }
 
+    public function showCommunity(CommunityAccountRequest $community): View
+    {
+        // pastikan hanya akun yang disetujui yang dapat dilihat publik
+        abort_unless($community->status === 'approved', 404);
+
+        return view('communities.show', compact('community'));
+    }
+
     public function articles(): View
     {
         $articles = CommunityStory::query()

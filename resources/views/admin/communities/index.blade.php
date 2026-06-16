@@ -92,6 +92,7 @@
                                     <th>Status</th>
                                     <th>Daftar</th>
                                     <th>Verifikasi</th>
+                                    <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -138,10 +139,17 @@
                                                 @endif
                                             </div>
                                         </td>
+                                        <td>
+                                            <form action="{{ route('admin.communities.destroy', $community) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus akun komunitas ini beserta seluruh artikelnya?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="table-action delete" type="submit">Hapus</button>
+                                            </form>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="empty-table">Belum ada akun komunitas yang terdaftar.</td>
+                                        <td colspan="8" class="empty-table">Belum ada akun komunitas yang terdaftar.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
