@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Daftar Komunitas Literasi - SILERA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body>
+    <header class="site-header">
+        <div class="container nav-shell">
+            <a href="{{ route('home') }}" class="brand-group" aria-label="Beranda SILERA">
+                <img class="brand-logo" src="{{ asset('images/logobalai.png') }}" alt="Kemendikdasmen Balai Bahasa Provinsi Riau">
+                <span class="brand-divider"></span>
+                <strong>SILERA</strong>
+            </a>
+
+            <nav class="main-nav" aria-label="Navigasi utama">
+                <a href="{{ route('home') }}">Beranda</a>
+                <a class="active" href="{{ route('communities.index') }}">Komunitas</a>
+                <a href="{{ route('home') }}#informasi">Informasi</a>
+                <a href="{{ route('home') }}#tentang">Tentang Kami</a>
+            </nav>
+
+            @if (session('account_created'))
+                @php
+                    $accountLogo = session('account_logo') ?: \App\Models\CommunityAccountRequest::query()
+                        ->where('email', session('account_email'))
+                        ->value('logo_path');
+                @endphp
+                <div class="nav-actions">
+                    <a class="account-chip" href="{{ route('community-profile.show') }}" aria-label="Buka akun {{ session('account_name') }}">
+                        @if ($accountLogo)
+                            <img src="{{ asset('storage/'.$accountLogo) }}" alt="Logo akun {{ session('account_name') }}">
+                        @else
+                            <span>{{ strtoupper(substr(session('account_name', 'A'), 0, 1)) }}</span>
+                        @endif
+                    </a>
+                </div>
+            @else
+                <div class="nav-actions">
+                    <a class="btn btn-ghost" href="{{ route('community-login.create') }}">Masuk</a>
+                </div>
+            @endif
+        </div>
+    </header>
+
+    <main class="community-directory-page">
+        <section class="section community-directory-hero">
+            <div class="container">
+                <div class="section-heading split-heading">
+                    <div>
+                        <h1>Daftar Komunitas Literasi</h1>
+                        <p>Telusuri komunitas literasi yang sudah terdaftar di SILERA.</p>
+                    </div>
+                    <form class="search-field" action="{{ route('communities.index') }}" method="GET">
+                        <span aria-hidden="true">⌕</span>
+                        <input type="search" name="q" value="{{ $search }}" placeholder="Cari nama komunitas...">
+                    </form>
+                </div>
+
+                @if ($search !== '')
+                    <p class="search-result-note">
+                        Hasil pencarian untuk <strong>{{ $search }}</strong>: {{ $communities->total() }} komunitas.
+                    </p>
+                @endif
+
+                <div class="community-grid">
+                    @forelse ($communities as $community)
+                        <article class="community-card community-profile-card">
+                            <div class="community-logo-preview">
+                                @if ($community->logo_path)
+                                    <img src="{{ asset('storage/'.$community->logo_path) }}" alt="Logo {{ $community->community_name }}">
+                                @else
+                                    <span>{{ strtoupper(substr($community->community_name, 0, 1)) }}</span>
+                                @endif
+                            </div>
+                            <div class="card-body">
+                                <h3>{{ $community->community_name }}</h3>
+                            </div>
+                        </article>
+                    @empty
+                        <article class="community-empty-state">
+                            <h3>Komunitas tidak ditemukan.</h3>
+                            <p>Coba gunakan kata kunci lain atau hapus pencarian.</p>
+                        </article>
+                    @endforelse
+                </div>
+
+                <div class="pagination-row">
+                    {{ $communities->links() }}
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

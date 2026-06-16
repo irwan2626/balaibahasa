@@ -42,6 +42,10 @@
             </header>
 
             <main class="dashboard-content">
+                @if (session('status'))
+                    <div class="form-alert success">{{ session('status') }}</div>
+                @endif
+
                 <section class="stat-grid" aria-label="Ringkasan akun komunitas">
                     <article class="stat-card">
                         <span class="stat-icon">K</span>
@@ -52,19 +56,19 @@
                     <article class="stat-card">
                         <span class="stat-icon sky">P</span>
                         <p>Menunggu</p>
-                        <strong>{{ \Illuminate\Support\Facades\DB::table('community_account_requests')->where('status', 'pending')->count() }}</strong>
+                        <strong>{{ $summary['pending'] }}</strong>
                         <small>Perlu verifikasi admin</small>
                     </article>
                     <article class="stat-card">
                         <span class="stat-icon teal">A</span>
                         <p>Disetujui</p>
-                        <strong>{{ \Illuminate\Support\Facades\DB::table('community_account_requests')->where('status', 'approved')->count() }}</strong>
+                        <strong>{{ $summary['approved'] }}</strong>
                         <small>Akun aktif</small>
                     </article>
                     <article class="stat-card">
                         <span class="stat-icon gold">R</span>
                         <p>Ditolak</p>
-                        <strong>{{ \Illuminate\Support\Facades\DB::table('community_account_requests')->where('status', 'rejected')->count() }}</strong>
+                        <strong>{{ $summary['rejected'] }}</strong>
                         <small>Pengajuan tidak valid</small>
                     </article>
                 </section>
@@ -87,13 +91,18 @@
                                     <th>Jabatan</th>
                                     <th>Status</th>
                                     <th>Daftar</th>
+                                    <th>Verifikasi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($communities as $community)
                                     <tr>
                                         <td>
-                                            <span class="table-avatar">{{ strtoupper(substr($community->community_name, 0, 1)) }}</span>
+                                            @if ($community->logo_path)
+                                                <img class="table-logo" src="{{ asset('storage/'.$community->logo_path) }}" alt="Logo {{ $community->community_name }}">
+                                            @else
+                                                <span class="table-avatar">{{ strtoupper(substr($community->community_name, 0, 1)) }}</span>
+                                            @endif
                                             <div>
                                                 <strong>{{ $community->community_name }}</strong>
                                                 <small>ID #{{ $community->id }}</small>
@@ -111,10 +120,28 @@
                                             <span class="status-pill status-{{ $community->status }}">{{ $community->status }}</span>
                                         </td>
                                         <td>{{ \Illuminate\Support\Carbon::parse($community->created_at)->format('d M Y') }}</td>
+                                        <td>
+                                            <div class="table-action-group">
+                                                @if ($community->status !== 'approved')
+                                                    <form action="{{ route('admin.communities.approve', $community) }}" method="POST">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <button class="table-action approve" type="submit">Setujui</button>
+                                                    </form>
+                                                @endif
+                                                @if ($community->status !== 'rejected')
+                                                    <form action="{{ route('admin.communities.reject', $community) }}" method="POST">
+                                                        @csrf
+                                                        @method('PATCH')
+                                                        <button class="table-action reject" type="submit">Tolak</button>
+                                                    </form>
+                                                @endif
+                                            </div>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="empty-table">Belum ada akun komunitas yang terdaftar.</td>
+                                        <td colspan="7" class="empty-table">Belum ada akun komunitas yang terdaftar.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

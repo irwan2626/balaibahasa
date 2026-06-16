@@ -27,7 +27,7 @@
 
             @if (session('account_created'))
                 <div class="nav-actions">
-                    <a class="account-chip" href="{{ route('community-stories.create') }}" aria-label="Buka akun {{ session('account_name') }}">
+                    <a class="account-chip" href="{{ route('community-profile.show') }}" aria-label="Buka akun {{ session('account_name') }}">
                         <span>{{ strtoupper(substr(session('account_name', 'A'), 0, 1)) }}</span>
                     </a>
                     <form class="account-logout-form" action="{{ route('community-login.destroy') }}" method="POST">
@@ -43,28 +43,7 @@
         </div>
     </header>
 
-    <main class="register-modern-shell">
-        <section class="register-hero-panel" aria-label="Manfaat pendaftaran komunitas">
-            <div class="register-hero-content">
-                <span class="register-badge">
-                    <span aria-hidden="true">◇</span>
-                    Digital Literasi Riau
-                </span>
-                <h1>Membangun Masa Depan Literasi Bersama</h1>
-                <p>Daftarkan komunitas Anda di SILERA untuk mendapatkan akses ke sumber daya pendidikan, pendampingan dari Balai Bahasa Riau, dan jaringan literasi yang luas di seluruh provinsi.</p>
-                <div class="register-metrics">
-                    <div>
-                        <strong>150+</strong>
-                        <span>Komunitas Terdaftar</span>
-                    </div>
-                    <div>
-                        <strong>12</strong>
-                        <span>Kabupaten/Kota</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
+    <main class="register-modern-shell register-form-only-shell">
         <section class="register-form-area">
             <div class="register-form-card" aria-labelledby="register-title">
                 <div class="register-form-heading">
@@ -84,7 +63,7 @@
                     </div>
                 @endif
 
-                <form class="modern-account-form" action="{{ route('community-account.store') }}" method="POST">
+                <form class="modern-account-form" action="{{ route('community-account.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
                     <div class="form-grid">
@@ -104,6 +83,15 @@
                             @enderror
                         </label>
 
+                        <label class="modern-field form-wide">
+                            <span>Foto Logo Komunitas</span>
+                            <input class="file-input" type="file" name="logo" accept="image/png,image/jpeg,image/webp" required>
+                            <small class="field-help">Unggah logo komunitas dalam format JPG, PNG, atau WEBP maksimal 2 MB.</small>
+                            @error('logo')
+                                <small>{{ $message }}</small>
+                            @enderror
+                        </label>
+
                         <label class="modern-field">
                             <span>Jabatan</span>
                             <select name="position" required>
@@ -113,6 +101,30 @@
                                 @endforeach
                             </select>
                             @error('position')
+                                <small>{{ $message }}</small>
+                            @enderror
+                        </label>
+
+                        <label class="modern-field form-wide">
+                            <span>Visi Komunitas</span>
+                            <textarea name="vision" rows="4" placeholder="Tuliskan tujuan besar yang ingin dicapai komunitas literasi Anda." required>{{ old('vision') }}</textarea>
+                            @error('vision')
+                                <small>{{ $message }}</small>
+                            @enderror
+                        </label>
+
+                        <label class="modern-field form-wide">
+                            <span>Misi Komunitas</span>
+                            <textarea name="mission" rows="5" placeholder="Tuliskan langkah, program, atau kegiatan utama komunitas." required>{{ old('mission') }}</textarea>
+                            @error('mission')
+                                <small>{{ $message }}</small>
+                            @enderror
+                        </label>
+
+                        <label class="modern-field form-wide">
+                            <span>Latar Belakang Komunitas</span>
+                            <textarea name="background" rows="5" placeholder="Ceritakan alasan berdirinya komunitas, fokus kegiatan, dan masyarakat yang dilayani." required>{{ old('background') }}</textarea>
+                            @error('background')
                                 <small>{{ $message }}</small>
                             @enderror
                         </label>

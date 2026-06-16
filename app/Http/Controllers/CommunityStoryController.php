@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CommunityAccountRequest;
+use App\Models\CommunityStory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class CommunityStoryController extends Controller
@@ -41,14 +42,14 @@ class CommunityStoryController extends Controller
             'story.min' => 'Cerita minimal 30 karakter.',
         ]);
 
-        $account = DB::table('community_account_requests')
+        $account = CommunityAccountRequest::query()
             ->where('email', $request->session()->get('account_email'))
             ->latest()
             ->first();
 
         $photoPath = $request->file('photo')->store('community-stories', 'public');
 
-        DB::table('community_stories')->insert([
+        CommunityStory::query()->create([
             'community_account_request_id' => $account?->id,
             'author_name' => $request->session()->get('account_name', 'Pengelola Komunitas'),
             'author_email' => $request->session()->get('account_email', $account?->email ?? ''),
@@ -56,8 +57,6 @@ class CommunityStoryController extends Controller
             'story' => $validated['story'],
             'photo_path' => $photoPath,
             'status' => 'submitted',
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
         return back()->with('status', 'Cerita berhasil dikirim dan sedang menunggu kurasi tim SILERA.');

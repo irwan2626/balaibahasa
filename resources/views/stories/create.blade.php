@@ -27,7 +27,7 @@
 
             @if (session('account_created'))
                 <div class="nav-actions">
-                    <a class="account-chip" href="{{ route('dashboard') }}" aria-label="Buka akun {{ session('account_name') }}">
+                    <a class="account-chip" href="{{ route('community-profile.show') }}" aria-label="Buka akun {{ session('account_name') }}">
                         <span>{{ strtoupper(substr(session('account_name', 'A'), 0, 1)) }}</span>
                     </a>
                 </div>

@@ -6,26 +6,24 @@ use App\Http\Controllers\AdminCommunityStoryController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\CommunityAccountLoginController;
 use App\Http\Controllers\CommunityAccountRequestController;
+use App\Http\Controllers\CommunityProfileController;
 use App\Http\Controllers\CommunityStoryController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\DB;
 
-Route::get('/', function () {
-    $publishedStories = DB::table('community_stories')
-        ->where('status', 'published')
-        ->latest('reviewed_at')
-        ->latest('created_at')
-        ->limit(3)
-        ->get();
-
-    return view('welcome', compact('publishedStories'));
-})->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/komunitas', [HomeController::class, 'communities'])->name('communities.index');
+Route::get('/articles', [HomeController::class, 'articles'])->name('articles.index');
+Route::get('/cerita/{story}', [HomeController::class, 'showStory'])->name('stories.show');
 
 Route::get('/buat-akun', [CommunityAccountRequestController::class, 'create'])->name('community-account.create');
 Route::post('/buat-akun', [CommunityAccountRequestController::class, 'store'])->name('community-account.store');
 Route::get('/akun/masuk', [CommunityAccountLoginController::class, 'create'])->name('community-login.create');
 Route::post('/akun/masuk', [CommunityAccountLoginController::class, 'store'])->name('community-login.store');
 Route::post('/akun/keluar', [CommunityAccountLoginController::class, 'destroy'])->name('community-login.destroy');
+Route::get('/akun/profil', [CommunityProfileController::class, 'show'])->name('community-profile.show');
+Route::patch('/akun/profil', [CommunityProfileController::class, 'update'])->name('community-profile.update');
 Route::get('/tambah-cerita', [CommunityStoryController::class, 'create'])->name('community-stories.create');
 Route::post('/tambah-cerita', [CommunityStoryController::class, 'store'])->name('community-stories.store');
 
@@ -37,26 +35,14 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AdminAuthController::class, 'destroy'])->name('logout');
 
-    Route::get('/dashboard', function () {
-        $stats = [
-            'communities' => DB::table('literacy_communities')->count(),
-            'posts' => DB::table('literacy_posts')->count(),
-            'active_programs' => DB::table('literacy_programs')->whereIn('status', ['planned', 'active'])->count(),
-            'members' => DB::table('community_members')->count(),
-        ];
-
-        $activities = DB::table('activity_reports')
-            ->join('literacy_communities', 'activity_reports.literacy_community_id', '=', 'literacy_communities.id')
-            ->select('activity_reports.title', 'activity_reports.activity_date', 'activity_reports.status', 'literacy_communities.name as community_name')
-            ->latest('activity_reports.created_at')
-            ->limit(3)
-            ->get();
-
-        return view('dashboard', compact('stats', 'activities'));
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/dashboard/komunitas', [AdminCommunityAccountController::class, 'index'])->name('admin.communities.index');
+    Route::patch('/dashboard/komunitas/{community}/approve', [AdminCommunityAccountController::class, 'approve'])->name('admin.communities.approve');
+    Route::patch('/dashboard/komunitas/{community}/reject', [AdminCommunityAccountController::class, 'reject'])->name('admin.communities.reject');
     Route::get('/dashboard/cerita', [AdminCommunityStoryController::class, 'index'])->name('admin.stories.index');
+    Route::get('/dashboard/cerita/{story}', [AdminCommunityStoryController::class, 'show'])->name('admin.stories.show');
+    Route::patch('/dashboard/cerita/{story}/comment', [AdminCommunityStoryController::class, 'comment'])->name('admin.stories.comment');
     Route::patch('/dashboard/cerita/{story}/approve', [AdminCommunityStoryController::class, 'approve'])->name('admin.stories.approve');
     Route::patch('/dashboard/cerita/{story}/reject', [AdminCommunityStoryController::class, 'reject'])->name('admin.stories.reject');
     Route::get('/dashboard/users', [AdminUserController::class, 'index'])->name('admin.users.index');

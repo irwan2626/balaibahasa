@@ -84,26 +84,20 @@
                                         <span class="status-pill status-{{ $story->status }}">{{ $story->status }}</span>
                                         <small>{{ \Illuminate\Support\Carbon::parse($story->created_at)->format('d M Y') }}</small>
                                     </div>
-                                    <h3>{{ $story->title }}</h3>
+                                    <h3><a href="{{ route('admin.stories.show', $story) }}">{{ $story->title }}</a></h3>
                                     <p>{{ \Illuminate\Support\Str::limit($story->story, 220) }}</p>
                                     <div class="story-review-meta">
                                         <span>{{ $story->author_name }}</span>
-                                        <span>{{ $story->community_name ?? 'Komunitas belum tercatat' }}</span>
+                                        <span>{{ $story->account?->community_name ?? 'Komunitas belum tercatat' }}</span>
                                         <span>{{ $story->author_email }}</span>
                                     </div>
                                     <div class="story-review-actions">
+                                        <a class="btn btn-secondary" href="{{ route('admin.stories.show', $story) }}">Baca Detail</a>
                                         @if ($story->status !== 'published')
                                             <form action="{{ route('admin.stories.approve', $story->id) }}" method="POST">
                                                 @csrf
                                                 @method('PATCH')
                                                 <button class="btn btn-primary" type="submit">Setujui</button>
-                                            </form>
-                                        @endif
-                                        @if ($story->status !== 'rejected')
-                                            <form action="{{ route('admin.stories.reject', $story->id) }}" method="POST">
-                                                @csrf
-                                                @method('PATCH')
-                                                <button class="btn btn-secondary" type="submit">Tolak</button>
                                             </form>
                                         @endif
                                     </div>

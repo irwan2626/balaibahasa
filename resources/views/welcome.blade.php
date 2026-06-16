@@ -26,9 +26,18 @@
             </nav>
 
             @if (session('account_created'))
+                @php
+                    $accountLogo = session('account_logo') ?: \App\Models\CommunityAccountRequest::query()
+                        ->where('email', session('account_email'))
+                        ->value('logo_path');
+                @endphp
                 <div class="nav-actions">
-                    <a class="account-chip" href="{{ route('community-stories.create') }}" aria-label="Buka akun {{ session('account_name') }}">
-                        <span>{{ strtoupper(substr(session('account_name', 'A'), 0, 1)) }}</span>
+                    <a class="account-chip" href="{{ route('community-profile.show') }}" aria-label="Buka akun {{ session('account_name') }}">
+                        @if ($accountLogo)
+                            <img src="{{ asset('storage/'.$accountLogo) }}" alt="Logo akun {{ session('account_name') }}">
+                        @else
+                            <span>{{ strtoupper(substr(session('account_name', 'A'), 0, 1)) }}</span>
+                        @endif
                     </a>
                     <form class="account-logout-form" action="{{ route('community-login.destroy') }}" method="POST">
                         @csrf
@@ -47,7 +56,6 @@
         <section class="hero-section">
             <div class="container hero-grid">
                 <div class="hero-copy">
-                    <span class="eyebrow">Balai Bahasa Provinsi Riau</span>
                     <h1>SILERA: Sistem Informasi Komunitas Literasi Riau</h1>
                     <p>Membangun ekosistem literasi yang terintegrasi di Bumi Lancang Kuning melalui pendataan, kolaborasi, dan pemberdayaan komunitas literasi di seluruh pelosok Riau.</p>
                     <div class="hero-actions">
@@ -56,8 +64,17 @@
                     </div>
                 </div>
 
-                <div class="hero-preview" aria-label="Pratinjau laman SILERA">
-                    <x-browser-preview />
+                <div class="hero-preview" aria-label="Kegiatan membaca di perpustakaan">
+                    <div class="hero-library-slider">
+                        <img class="hero-library-slide slide-one" src="{{ asset('images/buku1.jpg') }}" alt="Kegiatan membaca di perpustakaan">
+                        <img class="hero-library-slide slide-two" src="{{ asset('images/buku2.jpg') }}" alt="Suasana literasi dan buku bacaan">
+                        <img class="hero-library-slide slide-three" src="{{ asset('images/buku3.jpg') }}" alt="Ruang baca komunitas literasi">
+                        <div class="hero-library-dots" aria-hidden="true">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -67,40 +84,38 @@
                 <div class="section-heading split-heading">
                     <div>
                         <h2>Daftar Komunitas Literasi</h2>
-                        <p>Temukan dan bergabung dengan berbagai komunitas literasi, taman bacaan, dan forum diskusi yang tersebar di wilayah Riau.</p>
+                        <p>Temukan komunitas literasi yang sudah membuat akun dan terdaftar di SILERA.</p>
                     </div>
-                    <label class="search-field">
+                    <form class="search-field" action="{{ route('communities.index') }}" method="GET">
                         <span aria-hidden="true">⌕</span>
-                        <input type="search" placeholder="Cari komunitas atau lokasi...">
-                    </label>
+                        <input type="search" name="q" placeholder="Cari nama komunitas...">
+                    </form>
                 </div>
 
                 <div class="community-grid">
-                    @foreach ([
-                        ['name' => 'TBM Hamfara...', 'type' => 'Taman Bacaan', 'area' => 'Pekanbaru'],
-                        ['name' => 'Rumpus Bintang', 'type' => 'Komunitas', 'area' => 'Dumai'],
-                        ['name' => 'Forum Lingkar Pena', 'type' => 'Forum', 'area' => 'Kampar'],
-                        ['name' => 'TBM Kandas Library', 'type' => 'Perpustakaan', 'area' => 'Siak'],
-                    ] as $community)
-                        <article class="community-card">
-                            <div class="map-preview">
-                                <span class="map-pin pin-a"></span>
-                                <span class="map-pin pin-b"></span>
-                                <span class="map-pin pin-c"></span>
-                                <span class="map-river"></span>
-                                <strong>Riau</strong>
+                    @forelse ($registeredCommunities as $community)
+                        <article class="community-card community-profile-card">
+                            <div class="community-logo-preview">
+                                @if ($community->logo_path)
+                                    <img src="{{ asset('storage/'.$community->logo_path) }}" alt="Logo {{ $community->community_name }}">
+                                @else
+                                    <span>{{ strtoupper(substr($community->community_name, 0, 1)) }}</span>
+                                @endif
                             </div>
                             <div class="card-body">
-                                <span class="chip">{{ $community['type'] }}</span>
-                                <h3>{{ $community['name'] }}</h3>
-                                <p>{{ $community['area'] }}</p>
+                                <h3>{{ $community->community_name }}</h3>
                             </div>
                         </article>
-                    @endforeach
+                    @empty
+                        <article class="community-empty-state">
+                            <h3>Belum ada komunitas terdaftar.</h3>
+                            <p>Logo dan nama komunitas akan tampil di sini setelah akun komunitas disetujui admin.</p>
+                        </article>
+                    @endforelse
                 </div>
 
                 <div class="center-action">
-                    <a class="btn btn-secondary btn-wide" href="#">Lihat Semua Komunitas</a>
+                    <a class="btn btn-secondary btn-wide" href="{{ route('communities.index') }}">Lihat Semua Komunitas</a>
                 </div>
             </div>
         </section>
@@ -108,7 +123,11 @@
         <section id="tentang" class="about-section">
             <div class="container about-grid">
                 <div class="about-visual">
-                    <x-browser-preview compact="true" />
+                    <div class="about-activity-slider" aria-label="Dokumentasi kegiatan literasi">
+                        <img class="about-activity-slide slide-one" src="{{ asset('images/kegiatan1 (1).webp') }}" alt="Kegiatan literasi komunitas">
+                        <img class="about-activity-slide slide-two" src="{{ asset('images/kegiatan1 (2).JPG') }}" alt="Dokumentasi kegiatan membaca">
+                        <img class="about-activity-slide slide-three" src="{{ asset('images/kegitan.png') }}" alt="Kegiatan Balai Bahasa Provinsi Riau">
+                    </div>
                 </div>
                 <div class="about-copy">
                     <h2>Tentang Laman SILERA</h2>
@@ -125,9 +144,6 @@
                             <p>Memfasilitasi jejaring antar pegiat literasi daerah.</p>
                         </div>
                     </div>
-                    <div class="ministry-signature">
-                        <img src="{{ asset('images/logobalai.png') }}" alt="Kemendikdasmen Balai Bahasa Provinsi Riau">
-                    </div>
                 </div>
             </div>
         </section>
@@ -136,7 +152,7 @@
             <div class="container">
                 <div class="section-heading split-heading">
                     <h2>Info Terkini Literasi Riau</h2>
-                    <a href="#">Lihat Semua Berita <span aria-hidden="true">›</span></a>
+                    <a href="{{ route('articles.index') }}">Lihat Semua articles <span aria-hidden="true">&rsaquo;</span></a>
                 </div>
 
                 <div class="news-grid">
@@ -150,9 +166,16 @@
                     @endphp
 
                     @foreach ($newsItems as $item)
+                        @php
+                            $isPublishedStory = $item instanceof \App\Models\CommunityStory;
+                        @endphp
+
                         <article class="news-card">
+                            @if ($isPublishedStory)
+                                <a href="{{ route('stories.show', $item) }}" aria-label="Baca cerita {{ $item->title }}">
+                            @endif
                             @if ($item->photo_path)
-                                <img class="news-image" src="{{ asset('storage/'.$item->photo_path) }}" alt="Foto cerita {{ $item->title }}">
+                                <img class="news-image" src="{{ asset('storage/'.$item->photo_path) }}" alt="Cover cerita {{ $item->title }}">
                             @else
                                 <div class="news-thumb">
                                     <span></span>
@@ -163,6 +186,9 @@
                             <div class="news-meta">{{ \Illuminate\Support\Carbon::parse($item->created_at)->translatedFormat('d M Y') }} <span>•</span> 5 min baca</div>
                             <h3>{{ $item->title }}</h3>
                             <p>{{ \Illuminate\Support\Str::limit($item->story, 130) }}</p>
+                            @if ($isPublishedStory)
+                                </a>
+                            @endif
                         </article>
                     @endforeach
                 </div>
