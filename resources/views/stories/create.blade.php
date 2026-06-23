@@ -10,40 +10,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="story-page">
-    <header class="site-header">
-        <div class="container nav-shell">
-            <a href="{{ url('/') }}" class="brand-group" aria-label="Beranda SILERA">
-                <img class="brand-logo" src="{{ asset('images/logobalai.png') }}" alt="Kemendikdasmen Balai Bahasa Provinsi Riau">
-                <span class="brand-divider"></span>
-                <img class="silera-logo"src="{{ asset('images/logosilera.jpeg') }}"alt="Logo SILERA">
-            </a>
-
-            <nav class="main-nav" aria-label="Navigasi utama">
-                <a href="{{ url('/') }}">Beranda</a>
-                <a href="{{ url('/#komunitas') }}">Komunitas</a>
-                <a href="{{ url('/#informasi') }}">Informasi</a>
-                <a href="{{ url('/#tentang') }}">Tentang Kami</a>
-            </nav>
-
-            @if (session('account_created'))
-             @php
-                    $accountLogo = session('account_logo') ?: \App\Models\CommunityAccountRequest::query()
-                        ->where('email', session('account_email'))
-                        ->value('logo_path');
-                @endphp
-                <a class="account-chip" href="{{ route('community-profile.show') }}" aria-label="Buka akun {{ session('account_name') }}">
-
-    @if($accountLogo)
-        <img src="{{ asset('storage/'.$accountLogo) }}"
-             alt="Logo akun {{ session('account_name') }}">
-    @else
-        <span>{{ strtoupper(substr(session('account_name', 'A'), 0, 1)) }}</span>
-    @endif
-
-</a>
-            @endif
-        </div>
-    </header>
+    @include('layouts.navbar')
 
     <main class="story-shell">
         <section class="story-hero simple-hero" style="padding:1rem 0; text-align:center;">

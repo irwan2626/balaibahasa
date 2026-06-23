@@ -10,38 +10,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="register-page register-page-modern">
-    <header class="site-header">
-        <div class="container nav-shell">
-            <a href="{{ url('/') }}" class="brand-group" aria-label="Beranda SILERA">
-                <img class="brand-logo" src="{{ asset('images/logobalai.png') }}" alt="Kemendikdasmen Balai Bahasa Provinsi Riau">
-                <span class="brand-divider"></span>
-                <img class="silera-logo"src="{{ asset('images/logosilera.jpeg') }}"alt="Logo SILERA">
-            </a>
-
-            <nav class="main-nav" aria-label="Navigasi utama">
-                <a href="{{ url('/') }}">Beranda</a>
-                <a href="{{ url('/#komunitas') }}">Komunitas</a>
-                <a href="{{ url('/#informasi') }}">Informasi</a>
-                <a href="{{ url('/#tentang') }}">Tentang Kami</a>
-            </nav>
-
-            @if (session('account_created'))
-                <div class="nav-actions">
-                    <a class="account-chip" href="{{ route('community-profile.show') }}" aria-label="Buka akun {{ session('account_name') }}">
-                        <span>{{ strtoupper(substr(session('account_name', 'A'), 0, 1)) }}</span>
-                    </a>
-                    <form class="account-logout-form" action="{{ route('community-login.destroy') }}" method="POST">
-                        @csrf
-                        <button type="submit">Keluar</button>
-                    </form>
-                </div>
-            @else
-                <div class="nav-actions">
-                    <a class="btn btn-ghost" href="{{ route('community-login.create') }}">Masuk</a>
-                </div>
-            @endif
-        </div>
-    </header>
+@include('layouts.navbar')
 
     <main class="register-modern-shell register-form-only-shell">
         <section class="register-form-area">

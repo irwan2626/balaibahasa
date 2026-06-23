@@ -20,22 +20,7 @@
     </style>
 </head>
 <body>
-    <header class="site-header">
-        <div class="container nav-shell">
-            <a href="{{ route('home') }}" class="brand-group" aria-label="Beranda SILERA">
-                <img class="brand-logo" src="{{ asset('images/logobalai.png') }}" alt="Kemendikdasmen Balai Bahasa Provinsi Riau">
-                <span class="brand-divider"></span>
-                <img class="silera-logo"src="{{ asset('images/logosilera.jpeg') }}"alt="Logo SILERA">
-            </a>
-
-            <nav class="main-nav" aria-label="Navigasi utama">
-                <a href="{{ route('home') }}">Beranda</a>
-                <a href="{{ route('communities.index') }}">Komunitas</a>
-                <a href="{{ route('home') }}#informasi">Informasi</a>
-                <a href="{{ route('home') }}#tentang">Tentang Kami</a>
-            </nav>
-        </div>
-    </header>
+    @include('layouts.navbar')
 
     <main class="community-profile-page">
         <section class="section">

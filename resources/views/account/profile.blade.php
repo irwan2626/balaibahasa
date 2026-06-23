@@ -10,40 +10,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="community-profile-page">
-    <header class="site-header">
-        <div class="container nav-shell">
-            <a href="{{ route('home') }}" class="brand-group" aria-label="Beranda SILERA">
-                <img class="brand-logo" src="{{ asset('images/logobalai.png') }}" alt="Kemendikdasmen Balai Bahasa Provinsi Riau">
-                <span class="brand-divider"></span>
-                <img class="silera-logo"src="{{ asset('images/logosilera.jpeg') }}"alt="Logo SILERA">
-            </a>
-
-            <nav class="main-nav" aria-label="Navigasi utama">
-                <a href="{{ route('home') }}">Beranda</a>
-                <a href="{{ url('/#komunitas') }}">Komunitas</a>
-                <a href="{{ url('/#informasi') }}">Informasi</a>
-                <a href="{{ url('/#tentang') }}">Tentang Kami</a>
-            </nav>
-
-            <div class="nav-actions">
-                <a class="account-chip" href="{{ route('community-profile.show') }}" aria-label="Buka akun {{ session('account_name') ?? ($account->community_name ?? '') }}">
-                    @php
-                        $chipLogo = session('account_logo') ?: ($account->logo_path ?? null);
-                        $chipName = session('account_name') ?: ($account->name ?? 'A');
-                    @endphp
-                    @if ($chipLogo)
-                        <img src="{{ asset('storage/'.$chipLogo) }}" alt="Logo {{ $chipName }}" style="width:36px;height:36px;object-fit:cover;border-radius:999px">
-                    @else
-                        <span>{{ strtoupper(substr($chipName, 0, 1)) }}</span>
-                    @endif
-                </a>
-                <form class="account-logout-form" action="{{ route('community-login.destroy') }}" method="POST">
-                    @csrf
-                    <button type="submit">Keluar</button>
-                </form>
-            </div>
-        </div>
-    </header>
+@include('layouts.navbar')
 
     <main class="community-profile-shell">
         <section class="community-profile-hero">

@@ -7,31 +7,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
-    <header class="site-header">
-        <div class="container nav-shell">
-            <a href="{{ route('home') }}" class="brand-group" aria-label="Beranda SILERA">
-                <img class="brand-logo" src="{{ asset('images/logobalai.png') }}" alt="Kemendikdasmen Balai Bahasa Provinsi Riau">
-                <span class="brand-divider"></span>
-                <img class="silera-logo"src="{{ asset('images/logosilera.jpeg') }}"alt="Logo SILERA">
-            </a>
-
-            <nav class="main-nav" aria-label="Navigasi utama">
-                <a href="#">Beranda</a>
-                <a href="#">Cerita</a>
-                <a href="#">Profil</a>
-            </nav>
-
-            <div class="nav-actions">
-                <a class="account-chip" href="{{ route('community-profile.show') }}">
-                    @if ($account->logo_path)
-                        <img src="{{ asset('storage/'.$account->logo_path) }}" alt="Logo akun {{ $account->community_name }}">
-                    @else
-                        <span>{{ strtoupper(substr($account->community_name, 0, 1)) }}</span>
-                    @endif
-                </a>
-            </div>
-        </div>
-    </header>
+    @include('layouts.navbar')
 
     <main class="community-home-page">
         <section class="container">

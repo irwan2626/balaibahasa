@@ -8,36 +8,50 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Swiper CSS (CDN) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+
+    <style>
+        /* Reduce slider area and center it; make images cropped and responsive */
+        .public-story-cover.story-swiper-container {
+            max-width: 900px;
+            margin: 1.25rem auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        }
+
+        /* constrain image height and crop using object-fit */
+        .story-swiper .swiper-slide img,
+        .public-story-cover img {
+            width: 100%;
+            height: 380px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* smaller on mobile to avoid large visual area */
+        @media (max-width: 768px) {
+            .story-swiper .swiper-slide img,
+            .public-story-cover img {
+                height: 220px;
+            }
+        }
+
+        /* pagination positioning */
+        .story-swiper .swiper-pagination {
+            bottom: 8px;
+        }
+
+        /* keep article content width aligned with the slider */
+        .public-story-article .public-story-content {
+            max-width: 900px;
+            margin: 1rem auto;
+        }
+    </style>
 </head>
 <body class="public-story-page">
-    <header class="site-header">
-        <div class="container nav-shell">
-            <a href="{{ route('home') }}" class="brand-group" aria-label="Beranda SILERA">
-                <img class="brand-logo" src="{{ asset('images/logobalai.png') }}" alt="Kemendikdasmen Balai Bahasa Provinsi Riau">
-                <span class="brand-divider"></span>
-                <img class="silera-logo"src="{{ asset('images/logosilera.jpeg') }}"alt="Logo SILERA">>
-            </a>
-
-            <nav class="main-nav" aria-label="Navigasi utama">
-                <a href="{{ route('home') }}">Beranda</a>
-                <a href="{{ url('/#komunitas') }}">Komunitas</a>
-                <a href="{{ url('/#informasi') }}">Informasi</a>
-                <a href="{{ url('/#tentang') }}">Tentang Kami</a>
-            </nav>
-
-            @if (session('account_created'))
-                <div class="nav-actions">
-                    <a class="account-chip" href="{{ route('community-profile.show') }}" aria-label="Buka akun {{ session('account_name') }}">
-                        <span>{{ strtoupper(substr(session('account_name', 'A'), 0, 1)) }}</span>
-                    </a>
-                </div>
-            @else
-                <div class="nav-actions">
-                    <a class="btn btn-ghost" href="{{ route('community-login.create') }}">Masuk</a>
-                </div>
-            @endif
-        </div>
-    </header>
+@include('layouts.navbar')
 
     <main>
         <article class="public-story-article">
@@ -52,19 +66,29 @@
                 <p>Ditulis oleh {{ $story->author_name }} dari {{ $story->account?->community_name ?? 'komunitas literasi Riau' }}.</p>
             </header>
 
-           <div class="public-story-cover">
-                <img src="{{ $story->cover_photo_path ? asset('storage/'.$story->cover_photo_path) : asset('images/logobalai.png') }}"
-                    alt="Cover cerita {{ $story->title }}">
-            </div>
+            {{-- If there are multiple photos, show a responsive Swiper slider. Otherwise fall back to single cover image. --}}
+            @if ($story->photos?->isNotEmpty())
+                <div class="public-story-cover story-swiper-container">
+                    <div class="swiper story-swiper">
+                        <div class="swiper-wrapper">
+                            @foreach ($story->photos as $photo)
+                                <div class="swiper-slide">
+                                    <img src="{{ asset('storage/'.$photo->photo_path) }}" alt="Foto {{ $loop->iteration }} dari {{ $story->title }}">
+                                </div>
+                            @endforeach
+                        </div>
 
-            @if ($story->photos->isNotEmpty())
-                 <section class="story-photo-gallery" aria-label="Galeri foto kegiatan">
-                    @foreach ($story->photos as $photo)
-                        <figure>
-                            <img src="{{ asset('storage/'.$photo->photo_path) }}" alt="Foto kegiatan {{ $story->title }}">
-                        </figure>
-                    @endforeach
-                </section>
+                        <!-- Navigation buttons removed for public story slider per request -->
+
+                         <!-- Pagination dots -->
+                         <div class="swiper-pagination" aria-hidden="false"></div>
+                     </div>
+                 </div>
+             @else
+                <div class="public-story-cover">
+                    <img src="{{ $story->cover_photo_path ? asset('storage/'.$story->cover_photo_path) : asset('images/logobalai.png') }}"
+                        alt="Cover cerita {{ $story->title }}">
+                </div>
             @endif
 
             <div class="public-story-content">
@@ -100,5 +124,48 @@
             </section>
         @endif
     </main>
+
+    <!-- Swiper JS (CDN) and initialization -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const swiperEl = document.querySelector('.swiper.story-swiper');
+            if (!swiperEl) return;
+
+            const paginationEl = swiperEl.querySelector('.swiper-pagination');
+
+            // Slower autoplay to match homepage behavior
+            const swiper = new Swiper(swiperEl, {
+                loop: true,
+                speed: 500, // transition duration in ms
+                autoplay: {
+                    delay: 3000, // time between slides
+                    disableOnInteraction: false,
+                },
+                pagination: {
+                    el: paginationEl,
+                    clickable: true,
+                },
+                keyboard: {
+                    enabled: true,
+                },
+                slidesPerView: 1,
+                spaceBetween: 10,
+                breakpoints: {
+                    768: {
+                        slidesPerView: 1,
+                    }
+                }
+            });
+
+            // Pause autoplay on hover, resume on leave
+            swiperEl.addEventListener('mouseenter', function () {
+                if (swiper.autoplay) swiper.autoplay.stop();
+            });
+            swiperEl.addEventListener('mouseleave', function () {
+                if (swiper.autoplay) swiper.autoplay.start();
+            });
+        });
+    </script>
 </body>
 </html>
