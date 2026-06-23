@@ -45,11 +45,13 @@ class AdminCommunityAccountController extends Controller
 
     public function destroy(CommunityAccountRequest $community): RedirectResponse
     {
-        $community->load('stories');
+        $community->load('stories.photos');
 
         $storyPhotos = $community->stories
-            ->pluck('photo_path')
+            ->flatMap(fn ($story) => $story->photos->pluck('photo_path')->push($story->photo_path))
             ->filter()
+            ->unique()
+            ->values()
             ->all();
 
         DB::transaction(function () use ($community) {

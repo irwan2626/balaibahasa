@@ -1,0 +1,1 @@
+Files community-forgot.blade.php and community-reset.blade.php were created as part of temporary password-reset feature. The user requested removal of the feature; these files can now be deleted if no longer needed.

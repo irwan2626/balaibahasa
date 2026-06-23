@@ -25,6 +25,7 @@ Route::post('/akun/masuk', [CommunityAccountLoginController::class, 'store'])->n
 Route::post('/akun/keluar', [CommunityAccountLoginController::class, 'destroy'])->name('community-login.destroy');
 Route::get('/akun/profil', [CommunityProfileController::class, 'show'])->name('community-profile.show');
 Route::patch('/akun/profil', [CommunityProfileController::class, 'update'])->name('community-profile.update');
+Route::get('/akun/beranda', [CommunityProfileController::class, 'home'])->name('community.home');
 Route::get('/tambah-cerita', [CommunityStoryController::class, 'create'])->name('community-stories.create');
 Route::post('/tambah-cerita', [CommunityStoryController::class, 'store'])->name('community-stories.store');
 
@@ -44,6 +45,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/dashboard/komunitas/{community}', [AdminCommunityAccountController::class, 'destroy'])->name('admin.communities.destroy');
     Route::get('/dashboard/cerita', [AdminCommunityStoryController::class, 'index'])->name('admin.stories.index');
     Route::get('/dashboard/cerita/{story}', [AdminCommunityStoryController::class, 'show'])->name('admin.stories.show');
+    Route::get('/dashboard/cerita/{story}/edit', [AdminCommunityStoryController::class, 'edit'])->name('admin.stories.edit');
+    Route::put('/dashboard/cerita/{story}', [AdminCommunityStoryController::class, 'update'])->name('admin.stories.update');
+    Route::post('/dashboard/cerita/{story}/photos', [AdminCommunityStoryController::class, 'storePhotos'])->name('admin.stories.photos.store');
+    Route::delete('/dashboard/cerita/{story}/photos/{photo}', [AdminCommunityStoryController::class, 'destroyPhoto'])->name('admin.stories.photos.destroy');
+    Route::delete('/dashboard/cerita/{story}', [AdminCommunityStoryController::class, 'destroy'])->name('admin.stories.destroy');
     Route::patch('/dashboard/cerita/{story}/comment', [AdminCommunityStoryController::class, 'comment'])->name('admin.stories.comment');
     Route::patch('/dashboard/cerita/{story}/approve', [AdminCommunityStoryController::class, 'approve'])->name('admin.stories.approve');
     Route::patch('/dashboard/cerita/{story}/reject', [AdminCommunityStoryController::class, 'reject'])->name('admin.stories.reject');

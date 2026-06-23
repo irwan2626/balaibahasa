@@ -15,7 +15,7 @@
             <a href="{{ url('/') }}" class="brand-group" aria-label="Beranda SILERA">
                 <img class="brand-logo" src="{{ asset('images/logobalai.png') }}" alt="Kemendikdasmen Balai Bahasa Provinsi Riau">
                 <span class="brand-divider"></span>
-                <strong>SILERA</strong>
+                <img class="silera-logo"src="{{ asset('images/logosilera.jpeg') }}"alt="Logo SILERA">
             </a>
 
             <nav class="main-nav" aria-label="Navigasi utama">

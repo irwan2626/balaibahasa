@@ -13,7 +13,7 @@ class HomeController extends Controller
     {
         $publishedStories = CommunityStory::query()
             ->where('status', 'published')
-            ->with('account')
+            ->with(['account', 'photos'])
             ->latest('reviewed_at')
             ->latest()
             ->limit(3)
@@ -32,10 +32,12 @@ class HomeController extends Controller
         abort_unless($story->status === 'published', 404);
 
         $story->load('account');
+        $story->load('photos');
 
         $relatedStories = CommunityStory::query()
             ->where('status', 'published')
             ->whereKeyNot($story->id)
+            ->with('photos')
             ->latest('reviewed_at')
             ->latest()
             ->limit(3)
@@ -75,7 +77,7 @@ class HomeController extends Controller
     {
         $articles = CommunityStory::query()
             ->where('status', 'published')
-            ->with('account')
+            ->with(['account', 'photos'])
             ->latest('reviewed_at')
             ->latest()
             ->paginate(9);

@@ -15,7 +15,7 @@
             <a href="{{ route('home') }}" class="brand-group" aria-label="Beranda SILERA">
                 <img class="brand-logo" src="{{ asset('images/logobalai.png') }}" alt="Kemendikdasmen Balai Bahasa Provinsi Riau">
                 <span class="brand-divider"></span>
-                <strong>SILERA</strong>
+                <img class="silera-logo"src="{{ asset('images/logosilera.jpeg') }}"alt="Logo SILERA">>
             </a>
 
             <nav class="main-nav" aria-label="Navigasi utama">
@@ -52,9 +52,20 @@
                 <p>Ditulis oleh {{ $story->author_name }} dari {{ $story->account?->community_name ?? 'komunitas literasi Riau' }}.</p>
             </header>
 
-            <div class="public-story-cover">
-                <img src="{{ $story->photo_path ? asset('storage/'.$story->photo_path) : asset('images/logobalai.png') }}" alt="Cover cerita {{ $story->title }}">
+           <div class="public-story-cover">
+                <img src="{{ $story->cover_photo_path ? asset('storage/'.$story->cover_photo_path) : asset('images/logobalai.png') }}"
+                    alt="Cover cerita {{ $story->title }}">
             </div>
+
+            @if ($story->photos->isNotEmpty())
+                 <section class="story-photo-gallery" aria-label="Galeri foto kegiatan">
+                    @foreach ($story->photos as $photo)
+                        <figure>
+                            <img src="{{ asset('storage/'.$photo->photo_path) }}" alt="Foto kegiatan {{ $story->title }}">
+                        </figure>
+                    @endforeach
+                </section>
+            @endif
 
             <div class="public-story-content">
                 @foreach (preg_split('/\R{2,}/', $story->story) as $paragraph)
@@ -73,8 +84,8 @@
                         @foreach ($relatedStories as $related)
                             <article class="news-card">
                                 <a href="{{ route('stories.show', $related) }}">
-                                    @if ($related->photo_path)
-                                        <img class="news-image" src="{{ asset('storage/'.$related->photo_path) }}" alt="Cover cerita {{ $related->title }}">
+                                    @if ($related->cover_photo_path)
+                                        <img class="news-image" src="{{ asset('storage/'.$related->cover_photo_path) }}" alt="Cover cerita {{ $related->title }}">
                                     @else
                                         <div class="news-thumb"><span></span><span></span><span></span></div>
                                     @endif

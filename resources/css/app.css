@@ -143,15 +143,6 @@ input {
     color: #fff;
 }
 
-.main-nav a.active::after {
-    position: absolute;
-    right: 0;
-    bottom: 22px;
-    left: 0;
-    height: 3px;
-    background: var(--secondary-container);
-    content: '';
-}
 
 .nav-actions,
 .hero-actions {
@@ -2360,6 +2351,17 @@ input {
     color: #087443;
 }
 
+.btn-danger {
+    border-color: #fee2e2;
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.btn-danger:hover {
+    border-color: #fecaca;
+    background: #fecaca;
+}
+
 .story-review-list {
     display: grid;
     gap: 18px;
@@ -2527,6 +2529,19 @@ input {
 .story-review-actions.stacked form {
     display: grid;
     gap: 12px;
+}
+
+.story-review-actions.compact {
+    margin: 0 0 22px;
+}
+
+.story-edit-card {
+    max-width: 900px;
+}
+
+.story-edit-form {
+    display: grid;
+    gap: 22px;
 }
 
 .pagination-row {
@@ -2935,6 +2950,94 @@ input {
     gap: 34px;
 }
 
+.story-form-simple,
+.story-form-fields {
+    display: grid;
+    gap: 22px;
+}
+
+.story-photo-preview {
+    overflow: hidden;
+    border: 1px solid var(--outline);
+    border-radius: 8px;
+    background: var(--surface-container);
+}
+
+.story-photo-preview img {
+    display: block;
+    width: 100%;
+    max-height: 360px;
+    object-fit: cover;
+}
+
+.story-photo-preview-grid,
+.story-photo-gallery,
+.admin-photo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.story-photo-preview-grid[hidden] {
+    display: none;
+}
+
+.story-photo-preview-grid figure,
+.story-photo-gallery figure,
+.admin-photo-grid figure {
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+    border: 1px solid var(--outline);
+    border-radius: 8px;
+    background: var(--surface-container);
+    aspect-ratio: 4 / 3;
+}
+
+.story-photo-preview-grid img,
+.story-photo-gallery img,
+.admin-photo-grid img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.story-photo-gallery {
+    width: min(100%, 860px);
+    margin: 34px auto 0;
+}
+
+.story-photo-manager-card {
+    margin-top: 24px;
+}
+
+.story-photo-upload-form {
+    display: grid;
+    gap: 18px;
+    margin-top: 26px;
+}
+
+.admin-photo-grid form {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    margin: 0;
+}
+
+.admin-photo-grid button {
+    min-height: 32px;
+    border: 1px solid rgba(147, 0, 10, 0.28);
+    border-radius: 4px;
+    background: rgba(255, 218, 214, 0.94);
+    color: #93000a;
+    cursor: pointer;
+    font-family: Montserrat, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 0 10px;
+}
+
 .story-upload {
     position: relative;
     display: grid;
@@ -3222,6 +3325,12 @@ input {
         min-height: 280px;
     }
 
+    .story-photo-preview-grid,
+    .story-photo-gallery,
+    .admin-photo-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .modern-field textarea {
         min-height: 240px;
         font-size: 16px;
@@ -3337,6 +3446,8 @@ input {
     .dashboard-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    
 }
 
 @media (max-width: 760px) {
@@ -3383,6 +3494,12 @@ input {
 
     .main-nav a.active::after {
         bottom: 4px;
+    }
+
+    .story-photo-preview-grid,
+    .story-photo-gallery,
+    .admin-photo-grid {
+        grid-template-columns: 1fr;
     }
 
     .btn {
@@ -3529,4 +3646,11 @@ input {
         flex-direction: column;
         text-align: center;
     }
+
+    
 }
+.silera-logo {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+    }

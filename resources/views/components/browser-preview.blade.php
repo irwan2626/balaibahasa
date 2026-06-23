@@ -9,7 +9,7 @@
     </div>
     <div class="browser-content">
         <div class="browser-logo">
-            <strong>SILERA</strong>
+            <img class="silera-logo"src="{{ asset('images/logosilera.jpeg') }}"alt="Logo SILERA">
             <small>Sistem Informasi Literasi Riau</small>
         </div>
         <div class="browser-text">

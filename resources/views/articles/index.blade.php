@@ -60,8 +60,8 @@
                     @forelse ($articles as $article)
                         <article class="news-card">
                             <a href="{{ route('stories.show', $article) }}" aria-label="Baca artikel {{ $article->title }}">
-                                @if ($article->photo_path)
-                                    <img class="news-image" src="{{ asset('storage/'.$article->photo_path) }}" alt="Cover artikel {{ $article->title }}">
+                                @if ($article->cover_photo_path)
+                                    <img class="news-image" src="{{ asset('storage/'.$article->cover_photo_path) }}" alt="Cover artikel {{ $article->title }}">
                                 @else
                                     <div class="news-thumb">
                                         <span></span>

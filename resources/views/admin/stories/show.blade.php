@@ -53,7 +53,7 @@
                 <div class="story-detail-grid">
                     <article class="story-article-card">
                         <a class="back-link" href="{{ route('admin.stories.index') }}">← Kembali ke daftar cerita</a>
-                        <img src="{{ $story->photo_path ? asset('storage/'.$story->photo_path) : asset('images/logobalai.png') }}" alt="Foto cerita {{ $story->title }}">
+                        <img src="{{ $story->cover_photo_path ? asset('storage/'.$story->cover_photo_path) : asset('images/logobalai.png') }}" alt="Foto cerita {{ $story->title }}">
                         <div class="story-article-body">
                             <div class="story-review-heading">
                                 <span class="status-pill status-{{ $story->status }}">{{ $story->status }}</span>
@@ -70,6 +70,15 @@
                                     <p>{{ $paragraph }}</p>
                                 @endforeach
                             </div>
+                            @if ($story->photos->isNotEmpty())
+                                <section class="story-photo-gallery admin-story-photo-gallery" aria-label="Galeri foto cerita">
+                                    @foreach ($story->photos as $photo)
+                                        <figure>
+                                            <img src="{{ asset('storage/'.$photo->photo_path) }}" alt="Foto cerita {{ $story->title }}">
+                                        </figure>
+                                    @endforeach
+                                </section>
+                            @endif
                         </div>
                     </article>
 
@@ -79,6 +88,15 @@
                                 <h2>Catatan Admin</h2>
                                 <p>Tulis komentar perbaikan untuk pemilik cerita.</p>
                             </div>
+                        </div>
+
+                        <div class="story-review-actions stacked compact">
+                            <a class="btn btn-secondary" href="{{ route('admin.stories.edit', $story) }}">Edit Teks Cerita</a>
+                            <form action="{{ route('admin.stories.destroy', $story) }}" method="POST" onsubmit="return confirm('Hapus cerita ini dari daftar cerita masuk?')">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger" type="submit">Hapus Cerita</button>
+                            </form>
                         </div>
 
                         @if ($story->review_comment)

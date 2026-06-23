@@ -15,7 +15,7 @@
             <a href="{{ url('/') }}" class="brand-group" aria-label="Beranda SILERA">
                 <img class="brand-logo" src="{{ asset('images/logobalai.png') }}" alt="Kemendikdasmen Balai Bahasa Provinsi Riau">
                 <span class="brand-divider"></span>
-                <strong>SILERA</strong>
+                <img class="silera-logo"src="{{ asset('images/logosilera.jpeg') }}"alt="Logo SILERA">
             </a>
 
             <nav class="main-nav" aria-label="Navigasi utama">
@@ -26,83 +26,84 @@
             </nav>
 
             @if (session('account_created'))
-                <div class="nav-actions">
-                    <a class="account-chip" href="{{ route('community-profile.show') }}" aria-label="Buka akun {{ session('account_name') }}">
-                        <span>{{ strtoupper(substr(session('account_name', 'A'), 0, 1)) }}</span>
-                    </a>
-                </div>
+             @php
+                    $accountLogo = session('account_logo') ?: \App\Models\CommunityAccountRequest::query()
+                        ->where('email', session('account_email'))
+                        ->value('logo_path');
+                @endphp
+                <a class="account-chip" href="{{ route('community-profile.show') }}" aria-label="Buka akun {{ session('account_name') }}">
+
+    @if($accountLogo)
+        <img src="{{ asset('storage/'.$accountLogo) }}"
+             alt="Logo akun {{ session('account_name') }}">
+    @else
+        <span>{{ strtoupper(substr(session('account_name', 'A'), 0, 1)) }}</span>
+    @endif
+
+</a>
             @endif
         </div>
     </header>
 
     <main class="story-shell">
-        <section class="story-hero">
+        <section class="story-hero simple-hero" style="padding:1rem 0; text-align:center;">
             <div>
-                <span class="register-badge">
-                    <span aria-hidden="true">✎</span>
-                    Cerita Komunitas
-                </span>
-                <h1>Bagikan kisah literasi dari komunitas Anda</h1>
-                <p>Unggah foto kegiatan, tulis judul yang jelas, lalu ceritakan dampak kegiatan literasi yang ingin dibagikan ke jejaring SILERA.</p>
+                <h1 style="margin:0 0 .5rem">Bagikan Kisah Literasi Anda</h1>
+                <p style="margin:0;color:#6b7280">Form sederhana: unggah foto, berikan judul singkat, dan ceritakan pengalaman kegiatan.</p>
             </div>
-            <aside>
-                <small>Akun aktif</small>
-                <strong>{{ session('account_name') }}</strong>
-                <span>{{ session('account_email') }}</span>
-            </aside>
         </section>
 
-        <section class="story-form-card">
-            @if (session('status'))
-                <div class="form-alert success">
-                    {{ session('status') }}
-                </div>
-            @endif
+        <section class="story-form-card simple-form" style="max-width:720px;margin:1.25rem auto;padding:1rem;">
+             @if (session('status'))
+                 <div class="form-alert success">
+                     {{ session('status') }}
+                 </div>
+             @endif
 
-            @if ($errors->any())
-                <div class="form-alert error">
-                    Mohon periksa kembali data cerita Anda.
-                </div>
-            @endif
+             @if ($errors->any())
+                 <div class="form-alert error">
+                     Mohon periksa kembali data cerita Anda.
+                 </div>
+             @endif
 
-            <form class="story-form" action="{{ route('community-stories.store') }}" method="POST" enctype="multipart/form-data">
+            <form class="story-form-simple" action="{{ route('community-stories.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
-                <label class="story-upload">
-                    <input type="file" name="photo" accept="image/png,image/jpeg,image/webp" required>
-                    <span class="story-upload-visual">
-                        <strong>Unggah Foto Cerita</strong>
-                        <small>JPG, PNG, atau WEBP maksimal 2 MB</small>
-                    </span>
-                </label>
-                @error('photo')
-                    <p class="field-error">{{ $message }}</p>
-                @enderror
+                @include('stories._form')
+             </form>
+         </section>
+     </main>
 
-                <div class="story-fields">
-                    <label class="modern-field">
-                        <span>Judul Cerita</span>
-                        <input type="text" name="title" value="{{ old('title') }}" placeholder="Contoh: Lapak Baca di Tepian Sungai Siak" required>
-                        @error('title')
-                            <small>{{ $message }}</small>
-                        @enderror
-                    </label>
+    <script>
+        document.getElementById('photoInput')?.addEventListener('change', function(e){
+            const files = Array.from(e.target.files || []);
+            const preview = document.getElementById('photoPreview');
+            preview.innerHTML = '';
 
-                    <label class="modern-field">
-                        <span>Isi Cerita</span>
-                        <textarea name="story" rows="10" placeholder="Tulis cerita kegiatan, siapa yang terlibat, lokasi, dan dampaknya bagi warga..." required>{{ old('story') }}</textarea>
-                        @error('story')
-                            <small>{{ $message }}</small>
-                        @enderror
-                    </label>
+            if (!files.length) {
+                preview.hidden = true;
+                return;
+            }
 
-                    <button class="modern-submit" type="submit">
-                        Kirim Cerita
-                        <span aria-hidden="true">-&gt;</span>
-                    </button>
-                </div>
-            </form>
-        </section>
-    </main>
+            files.forEach(function(file) {
+                if (!file.type.startsWith('image/')) {
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    const figure = document.createElement('figure');
+                    const img = document.createElement('img');
+                    img.src = ev.target.result;
+                    img.alt = file.name;
+                    figure.appendChild(img);
+                    preview.appendChild(figure);
+                };
+                reader.readAsDataURL(file);
+            });
+
+            preview.hidden = false;
+        });
+    </script>
 </body>
 </html>

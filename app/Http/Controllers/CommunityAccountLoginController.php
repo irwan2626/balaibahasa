@@ -43,7 +43,8 @@ class CommunityAccountLoginController extends Controller
         $request->session()->put('account_email', $account->email);
         $request->session()->put('account_logo', $account->logo_path);
 
-        return redirect()->intended(route('community-stories.create'));
+        // Setelah login, arahkan ke beranda utama (publik) sehingga tampilan homepage menjadi milik komunitas
+        return redirect()->intended(route('home'));
     }
 
     public function destroy(Request $request): RedirectResponse

@@ -30,13 +30,18 @@ class CommunityStoryController extends Controller
         }
 
         $validated = $request->validate([
-            'photo' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'photos' => ['required', 'array', 'min:1'],
+            'photos.*' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
             'title' => ['required', 'string', 'max:255'],
             'story' => ['required', 'string', 'min:30'],
         ], [
-            'photo.required' => 'Foto cerita wajib diunggah.',
-            'photo.image' => 'File harus berupa gambar.',
-            'photo.max' => 'Ukuran foto maksimal 2 MB.',
+            'photos.required' => 'Foto cerita wajib diunggah.',
+            'photos.array' => 'Foto cerita harus berupa daftar file gambar.',
+            'photos.min' => 'Minimal unggah satu foto kegiatan.',
+            'photos.*.required' => 'Setiap foto wajib dipilih.',
+            'photos.*.image' => 'Setiap file harus berupa gambar.',
+            'photos.*.mimes' => 'Format foto harus JPG, JPEG, atau PNG.',
+            'photos.*.max' => 'Ukuran setiap foto maksimal 2 MB.',
             'title.required' => 'Judul cerita wajib diisi.',
             'story.required' => 'Isi cerita wajib diisi.',
             'story.min' => 'Cerita minimal 30 karakter.',
@@ -47,17 +52,26 @@ class CommunityStoryController extends Controller
             ->latest()
             ->first();
 
-        $photoPath = $request->file('photo')->store('community-stories', 'public');
+        $photoPaths = collect($request->file('photos', []))
+            ->map(fn ($photo) => $photo->store('community-stories', 'public'))
+            ->values();
 
-        CommunityStory::query()->create([
+        $story = CommunityStory::query()->create([
             'community_account_request_id' => $account?->id,
             'author_name' => $request->session()->get('account_name', 'Pengelola Komunitas'),
             'author_email' => $request->session()->get('account_email', $account?->email ?? ''),
             'title' => $validated['title'],
             'story' => $validated['story'],
-            'photo_path' => $photoPath,
+            'photo_path' => $photoPaths->first(),
             'status' => 'submitted',
         ]);
+
+        $photoPaths->each(function (string $path, int $index) use ($story) {
+            $story->photos()->create([
+                'photo_path' => $path,
+                'sort_order' => $index,
+            ]);
+        });
 
         return back()->with('status', 'Cerita berhasil dikirim dan sedang menunggu kurasi tim SILERA.');
     }

@@ -15,7 +15,7 @@
             <a href="{{ route('home') }}" class="brand-group" aria-label="Beranda SILERA">
                 <img class="brand-logo" src="{{ asset('images/logobalai.png') }}" alt="Kemendikdasmen Balai Bahasa Provinsi Riau">
                 <span class="brand-divider"></span>
-                <strong>SILERA</strong>
+                <img class="silera-logo"src="{{ asset('images/logosilera.jpeg') }}"alt="Logo SILERA">
             </a>
 
             <nav class="main-nav" aria-label="Navigasi utama">
@@ -26,8 +26,16 @@
             </nav>
 
             <div class="nav-actions">
-                <a class="account-chip" href="{{ route('community-profile.show') }}" aria-label="Buka akun {{ session('account_name') }}">
-                    <span>{{ strtoupper(substr(session('account_name', 'A'), 0, 1)) }}</span>
+                <a class="account-chip" href="{{ route('community-profile.show') }}" aria-label="Buka akun {{ session('account_name') ?? ($account->community_name ?? '') }}">
+                    @php
+                        $chipLogo = session('account_logo') ?: ($account->logo_path ?? null);
+                        $chipName = session('account_name') ?: ($account->name ?? 'A');
+                    @endphp
+                    @if ($chipLogo)
+                        <img src="{{ asset('storage/'.$chipLogo) }}" alt="Logo {{ $chipName }}" style="width:36px;height:36px;object-fit:cover;border-radius:999px">
+                    @else
+                        <span>{{ strtoupper(substr($chipName, 0, 1)) }}</span>
+                    @endif
                 </a>
                 <form class="account-logout-form" action="{{ route('community-login.destroy') }}" method="POST">
                     @csrf
@@ -143,11 +151,11 @@
                         <span>Ganti Logo Komunitas</span>
                         <input class="file-input" type="file" name="logo" accept="image/png,image/jpeg,image/webp">
                     </label>
-
-                    <button class="modern-submit" type="submit">Simpan Pengaturan <span aria-hidden="true">-&gt;</span></button>
-                </form>
-            </article>
-        </section>
+                     
+                     <button class="modern-submit" type="submit">Simpan Pengaturan <span aria-hidden="true">-&gt;</span></button>
+                 </form>
+             </article>
+         </section>
 
         <section class="dashboard-card">
             <div class="card-heading">

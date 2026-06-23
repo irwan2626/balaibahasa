@@ -78,7 +78,7 @@
                     <div class="story-review-list">
                         @forelse ($stories as $story)
                             <article class="story-review-item">
-                                <img src="{{ $story->photo_path ? asset('storage/'.$story->photo_path) : asset('images/logobalai.png') }}" alt="Foto cerita {{ $story->title }}">
+                                <img src="{{ $story->cover_photo_path ? asset('storage/'.$story->cover_photo_path) : asset('images/logobalai.png') }}" alt="Foto cerita {{ $story->title }}">
                                 <div>
                                     <div class="story-review-heading">
                                         <span class="status-pill status-{{ $story->status }}">{{ $story->status }}</span>
@@ -93,6 +93,7 @@
                                     </div>
                                     <div class="story-review-actions">
                                         <a class="btn btn-secondary" href="{{ route('admin.stories.show', $story) }}">Baca Detail</a>
+                                        <a class="btn btn-secondary" href="{{ route('admin.stories.edit', $story) }}">Edit Teks</a>
                                         @if ($story->status !== 'published')
                                             <form action="{{ route('admin.stories.approve', $story->id) }}" method="POST">
                                                 @csrf
@@ -100,6 +101,11 @@
                                                 <button class="btn btn-primary" type="submit">Setujui</button>
                                             </form>
                                         @endif
+                                        <form action="{{ route('admin.stories.destroy', $story) }}" method="POST" onsubmit="return confirm('Hapus cerita ini dari daftar cerita masuk?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-danger" type="submit">Hapus</button>
+                                        </form>
                                     </div>
                                 </div>
                             </article>

@@ -6,6 +6,7 @@ use App\Models\CommunityAccountRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
 
 class CommunityProfileController extends Controller
 {
@@ -50,6 +51,7 @@ class CommunityProfileController extends Controller
             'background' => ['required', 'string', 'max:3000'],
             'phone' => ['required', 'string', 'max:30'],
             'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'logo_data' => ['nullable', 'string'],
         ], [
             'name.required' => 'Nama pengelola wajib diisi.',
             'community_name.required' => 'Nama komunitas wajib diisi.',
@@ -65,8 +67,40 @@ class CommunityProfileController extends Controller
             'logo.max' => 'Ukuran logo maksimal 2 MB.',
         ]);
 
-        if ($request->hasFile('logo')) {
-            $validated['logo_path'] = $request->file('logo')->store('community-logos', 'public');
+        // Prioritaskan hasil crop (logo_data) jika ada
+        if ($request->filled('logo_data')) {
+            $data = $request->input('logo_data');
+            // data:image/png;base64,...
+            if (preg_match('/^data:image\/(\w+);base64,/', $data, $matches)) {
+                $type = strtolower($matches[1]);
+                $data = substr($data, strpos($data, ',') + 1);
+            } else {
+                // default to png
+                $type = 'png';
+            }
+
+            $decoded = base64_decode($data);
+            if ($decoded !== false) {
+                $ext = in_array($type, ['jpg','jpeg','png','webp']) ? $type : 'png';
+                $fileName = 'community-logos/' . uniqid('logo_') . '.' . $ext;
+                Storage::disk('public')->put($fileName, $decoded);
+
+                // hapus logo lama jika ada
+                if ($account->logo_path) {
+                    Storage::disk('public')->delete($account->logo_path);
+                }
+
+                $validated['logo_path'] = $fileName;
+            }
+        } elseif ($request->hasFile('logo')) {
+            // fallback jika ada file upload biasa
+            $filePath = $request->file('logo')->store('community-logos', 'public');
+            if ($filePath) {
+                if ($account->logo_path) {
+                    Storage::disk('public')->delete($account->logo_path);
+                }
+                $validated['logo_path'] = $filePath;
+            }
         }
 
         $account->update($validated);
@@ -77,6 +111,20 @@ class CommunityProfileController extends Controller
         $request->session()->put('account_logo', $freshAccount->logo_path);
 
         return back()->with('status', 'Informasi akun komunitas berhasil diperbarui.');
+    }
+
+    public function home(Request $request)
+    {
+        $account = $this->accountFromSession($request);
+
+        if (! $account) {
+            return redirect()->route('community-login.create');
+        }
+
+        $stories = $account->stories()->where('status', 'published')->latest()->paginate(6);
+        $drafts = $account->stories()->where('status', 'submitted')->latest()->get();
+
+        return view('account.home', compact('account', 'stories', 'drafts'));
     }
 
     private function accountFromSession(Request $request): ?CommunityAccountRequest
